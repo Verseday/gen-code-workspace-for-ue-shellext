@@ -7,7 +7,7 @@ set SCRIPT_NAME=GenerateCodeWorkspace.ps1
 set DEST_PATH=%DEST_DIR%\%SCRIPT_NAME%
 
 REM PowerShellでファイルを移動（上書き許可）
-powershell -Command "Move-Item -Path '%~dp0%SCRIPT_NAME%' -Destination '%DEST_DIR%' -Force"
+powershell -Command "Copy-Item -Path '%~dp0%SCRIPT_NAME%' -Destination '%DEST_DIR%' -Force"
 
 REM レジストリ登録用のパスを設定
 set SCRIPT=%DEST_PATH%
