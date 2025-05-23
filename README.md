@@ -12,9 +12,9 @@ Unreal Engine の `.uproject` ファイルを右クリックして `.code-worksp
 - **GenerateCodeWorkspace.ps1**  
   `.uproject` から EngineAssociation を取得し、UnrealBuildTool を実行して VSCode 用ワークスペースを生成
 - **install.bat**  
-  レジストリにコンテキストメニュー「Generate .code-workspace file」を追加
+  GenerateCodeWorkspace.ps1 を `C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64` に移動し、そのパスでレジストリにコンテキストメニュー「Generate .code-workspace file」を追加
 - **uninstall.bat**  
-  上記コンテキストメニューをレジストリから削除
+  上記レジストリ削除後、`C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64\GenerateCodeWorkspace.ps1` も削除
 
 ## インストール
 1. 管理者権限で `install.bat` を実行
@@ -22,6 +22,7 @@ Unreal Engine の `.uproject` ファイルを右クリックして `.code-worksp
 
 ## アンインストール
 1. 管理者権限で `uninstall.bat` を実行
+   - レジストリ削除後、`C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64\GenerateCodeWorkspace.ps1` も自動削除されます
 
 ## 使い方
 1. 対象の `.uproject` ファイルを右クリック
