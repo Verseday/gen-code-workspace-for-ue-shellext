@@ -62,6 +62,46 @@ $process = Start-Process -FilePath $ubtPath -ArgumentList $arguments -WorkingDir
 
 if ($process.ExitCode -eq 0) {
     Write-Host ".code-workspace file generated successfully."
+    
+    # c_cpp_properties.json を編集して includePath を追加する
+    $cppPropertiesPath = Join-Path $uprojectDir ".vscode\c_cpp_properties.json"
+    
+    if (Test-Path $cppPropertiesPath) {
+        Write-Host "Modifying c_cpp_properties.json to add includePath..."
+        
+        # JSONファイルを読み込む
+        $cppProperties = Get-Content $cppPropertiesPath -Raw | ConvertFrom-Json
+        
+        # includePathを追加する配列を定義（シングルクォートで変数展開を防ぐ）
+        $includePathsToAdd = @(
+            '${workspaceFolder}\Intermediate\**',
+            '${workspaceFolder}\Plugins\**',
+            '${workspaceFolder}\Source\**'
+        )
+        
+        # 各configurationにincludePathを追加
+        foreach ($config in $cppProperties.configurations) {
+            # 既存のincludePathがあれば保持し、なければ新規作成
+            if (-not $config.PSObject.Properties.Name.Contains("includePath")) {
+                Add-Member -InputObject $config -MemberType NoteProperty -Name "includePath" -Value $includePathsToAdd
+            } else {
+                # 既存のincludePathがある場合は、重複を避けて追加
+                $existingPaths = $config.includePath
+                foreach ($path in $includePathsToAdd) {
+                    if ($existingPaths -notcontains $path) {
+                        $existingPaths += $path
+                    }
+                }
+                $config.includePath = $existingPaths
+            }
+        }
+        
+        # 変更を保存
+        $cppProperties | ConvertTo-Json -Depth 10 | Set-Content $cppPropertiesPath
+        Write-Host "Successfully added includePath to c_cpp_properties.json"
+    } else {
+        Write-Host "Warning: c_cpp_properties.json not found at $cppPropertiesPath"
+    }
 } else {
     Write-Host "Failed to generate .code-workspace file. ExitCode: $($process.ExitCode)"
 }
